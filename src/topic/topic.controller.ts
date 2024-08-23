@@ -1,9 +1,13 @@
-import { Controller, Get, Post, Body, Param, Patch, Delete, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Patch, Delete, NotFoundException, UseGuards } from '@nestjs/common';
 import { TopicService } from './topic.service';
 import { CreateTopicDto, UpdateTopicDto } from '../dto/topic.dto';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { Topic } from '../schemas/topic.schema';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { Doctor } from '../schemas/doctor.schema';
 
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 @ApiTags('topics')
 @Controller('topics')
 export class TopicController {
@@ -46,5 +50,10 @@ export class TopicController {
   @ApiResponse({ status: 404, description: 'Topic not found' })
   async remove(@Param('id') id: string): Promise<void> {
     return this.topicService.remove(id);
+  }
+  @Get(':id/doctors')
+  @ApiOperation({ summary: 'Get Doctor list by Topic' })
+  async getDoctorsByTopic(@Param('id') id: string): Promise<Doctor[]> {
+    return this.topicService.findDoctorsByTopic(id);
   }
 }

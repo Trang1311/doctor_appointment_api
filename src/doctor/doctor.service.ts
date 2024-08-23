@@ -100,11 +100,7 @@ export class DoctorService {
     if (!doctor) {
       throw new NotFoundException(`Doctor with ID ${doctorId} not found`);
     }
-
-    // Fetch appointments for the specific doctor and date
     const bookedSlots = await this.appointmentModel.find({ doctor: doctorId, date }).exec();
-
-    // Filter out the booked slots
     const availableSlots = doctor.dailySlots
       .flatMap(slot => bookedSlots)
       .filter(slot =>
@@ -122,9 +118,8 @@ export class DoctorService {
     );
 
     if (!slotAvailable) {
-      throw new BadRequestException('Slot not available'); // Use BadRequestException for booking errors
+      throw new BadRequestException('Slot not available'); 
     }
-
     const appointment = new this.appointmentModel({ doctor: doctorId, date, startTime, endTime, userId });
     await appointment.save();
   }

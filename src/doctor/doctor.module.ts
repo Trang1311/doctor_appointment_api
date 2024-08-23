@@ -11,11 +11,11 @@ import { AvailableSlot, AvailableSlotSchema } from '../schemas/availableslot.sch
     MongooseModule.forFeature([
       { name: Doctor.name, schema: DoctorSchema },
       { name: Appointment.name, schema: AppointmentSchema },
-      { name: AvailableSlot.name, schema: AvailableSlotSchema }, // Ensure this is registered
+      { name: AvailableSlot.name, schema: AvailableSlotSchema },
     ]),
   ],
   providers: [DoctorService],
   controllers: [DoctorController],
-  exports: [DoctorService], // Export if other modules need to use DoctorService
+  exports: [DoctorService],
 })
 export class DoctorModule {}

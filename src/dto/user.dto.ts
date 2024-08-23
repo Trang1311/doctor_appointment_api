@@ -58,4 +58,7 @@ export class UpdateUserDto {
   @IsString()
   @IsOptional()
   phoneNumber?: string;
+  @ApiProperty({ description: 'User phone number' })
+  @IsString()
+  role?: string;
 }

@@ -1,9 +1,12 @@
-import { Controller, Get, Post, Body, Param, Patch, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Patch, Delete, UseGuards } from '@nestjs/common';
 import { DoctorService } from './doctor.service';
 import { CreateDoctorDto, UpdateDoctorDto } from '../dto/doctor.dto';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { Doctor } from '../schemas/doctor.schema';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 @ApiTags('doctors')
 @Controller('doctors')
 export class DoctorController {
@@ -47,6 +50,7 @@ export class DoctorController {
     return this.doctorService.remove(id);
   }
   @Post(':id/book')
+  @ApiOperation({ summary: 'Available Slot of Doctor' })
   async bookSlot(
   @Param('id') id: string,
   @Body('date') date: Date,

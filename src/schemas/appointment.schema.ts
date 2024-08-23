@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema } from 'mongoose';
 import { Doctor } from './doctor.schema';
+import { Topic } from './topic.schema';
 
 @Schema()
 export class Appointment extends Document {
@@ -8,16 +9,23 @@ export class Appointment extends Document {
   doctor: Doctor;
 
   @Prop({ required: true })
-  userId: string; // The user who booked the appointment
+  userId: string; 
+
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Topic', required: true })
+  topic: Topic;
+  @Prop({ required: true })
+  date: Date; 
 
   @Prop({ required: true })
-  date: Date; // The date of the appointment
+  startTime: string; 
 
   @Prop({ required: true })
-  startTime: string; // E.g., "08:00 AM"
+  endTime: string;  
+  @Prop({ required: true, enum: ['In-Person', 'Video Call'] })
+  appointmentType: string;
 
-  @Prop({ required: true })
-  endTime: string; // E.g., "09:00 AM"
+  @Prop({ required: true, enum: ['Pending', 'Confirmed', 'Canceled'], default: 'Pending' })
+  status: string;
 }
 
 export const AppointmentSchema = SchemaFactory.createForClass(Appointment);

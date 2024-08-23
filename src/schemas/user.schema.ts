@@ -32,6 +32,8 @@ export class User extends Document {
 
   @Prop()
   oauthId: string;
+  @Prop()
+  role: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

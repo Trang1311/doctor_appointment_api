@@ -1,4 +1,4 @@
-import { IsString, IsDate, IsEnum, IsMongoId, IsNotEmpty } from 'class-validator';
+import { IsString, IsDate, IsEnum, IsMongoId, IsNotEmpty, IsDateString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateAppointmentDto {
@@ -10,22 +10,27 @@ export class CreateAppointmentDto {
   @ApiProperty({ description: 'Doctor ID associated with the appointment' })
   @IsMongoId()
   @IsNotEmpty()
-  doctorId: string;
+  doctor: string;
 
   @ApiProperty({ description: 'Topic ID associated with the appointment' })
   @IsMongoId()
   @IsNotEmpty()
-  topicId: string;
+  topic: string;
 
-  @ApiProperty({ description: 'Appointment date' })
-  @IsDate()
+  @ApiProperty({ description: 'Appointment date in ISO format' })
+  @IsDateString()
   @IsNotEmpty()
-  appointmentDate: Date;
+  date: string;
 
   @ApiProperty({ description: 'Appointment time slot, e.g., "10:00 AM - 11:00 AM"' })
   @IsString()
   @IsNotEmpty()
-  appointmentTimeSlot: string;
+  startTime: string; 
+
+  @ApiProperty({ description: 'Appointment time slot, e.g., "10:00 AM - 11:00 AM"' })
+  @IsString()
+  @IsNotEmpty()
+  endTime: string;  
 
   @ApiProperty({ description: 'Appointment type: In-Person or Video Call' })
   @IsEnum(['In-Person', 'Video Call'])
