@@ -13,9 +13,10 @@ export class AppointmentService {
   ) {}
 
   async createAppointment(createAppointmentDto: CreateAppointmentDto): Promise<Appointment> {
-    const { date, startTime, endTime, ...rest } = createAppointmentDto;
+    const { doctor,date, startTime, endTime, ...rest } = createAppointmentDto;
     const appointmentDate = new Date(`${date}T${startTime}:00`);
     const existingAppointment = await this.appointmentModel.findOne({
+      doctor: doctor,
       date: appointmentDate,
       startTime: { $lt: endTime },
       endTime: { $gt: startTime },
@@ -27,6 +28,7 @@ export class AppointmentService {
 
     const newAppointment = new this.appointmentModel({
       ...rest,
+      doctor:doctor,
       date: appointmentDate,
       startTime,
       endTime,

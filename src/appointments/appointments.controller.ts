@@ -1,7 +1,7 @@
 import { Controller, Post, Body, Patch, Param } from '@nestjs/common';
 import { AppointmentService } from './appointments.service';
 import { CreateAppointmentDto, UpdateAppointmentDto } from '../dto/appointments.dto';
-import { ApiTags, ApiOperation, ApiBasicAuth, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 
 @ApiTags('appointments')
 @ApiBearerAuth()

@@ -3,9 +3,11 @@ import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import { Transport } from '@nestjs/microservices';
+import { join } from 'path';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.useGlobalPipes(new ValidationPipe());
 
   app.enableCors({
@@ -34,6 +36,8 @@ async function bootstrap() {
       },
     },
   });
+
+  app.useStaticAssets(join(__dirname, '..', 'sounds'));
 
   await app.startAllMicroservices();
   await app.listen(3000, '0.0.0.0');

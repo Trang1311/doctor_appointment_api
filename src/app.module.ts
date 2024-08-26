@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { DoctorModule } from './doctor/doctor.module';
 import { AppointmentsModule } from './appointments/appointments.module';
@@ -11,9 +9,12 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UsersModule } from './users/users.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import { AudioModule } from './audio/audio.module';
+import { join } from 'path';
+import { ServeStaticModule } from '@nestjs/serve-static';
 
 @Module({
-  imports: [AuthModule, DoctorModule, AppointmentsModule, TopicModule,GatewayModule,UsersModule,
+  imports: [AuthModule, DoctorModule, AppointmentsModule, TopicModule,GatewayModule,UsersModule,AudioModule,
     AuthModule,
     ConfigModule.forRoot(),
     MongooseModule.forRoot('mongodb://127.0.0.1:27017/doctor_appointment'),
@@ -37,8 +38,10 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
         },
       },
     }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'uploads'),
+      serveRoot: '/',
+    }),
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}
