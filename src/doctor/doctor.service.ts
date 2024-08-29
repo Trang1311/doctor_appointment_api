@@ -26,12 +26,9 @@ export class DoctorService {
       }))
     );
 
-    // Save available slots and get their IDs
     const savedSlots = await Promise.all(
       dailySlots.map(slot => new this.availableSlotModel(slot).save())
     );
-
-    // Create doctor with available slot IDs
     const newDoctor = new this.doctorModel({
       ...createDoctorDto,
       dailySlots: savedSlots.map(slot => slot._id), // Ensure this is an array of ObjectIds
@@ -41,7 +38,7 @@ export class DoctorService {
   }
 
   async findAll(): Promise<Doctor[]> {
-    return this.doctorModel.find().populate('dailySlots').exec(); // Populate dailySlots to include slot details
+    return this.doctorModel.find().populate('dailySlots').exec();
   }
 
   async findById(id: string): Promise<Doctor> {

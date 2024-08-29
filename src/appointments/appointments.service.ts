@@ -49,13 +49,15 @@ export class AppointmentService {
   }
 
   private async sendAppointmentEmail(appointment: Appointment): Promise<void> {
-    const { doctor, userId, topic, date, startTime, endTime, appointmentType } = appointment;
+    const { doctorname,doctor,username, topic, date, startTime, endTime, appointmentType } = appointment;
     try {
       await this.mailerService.sendMail({
         to: 'trang1311.proxy@gmail.com',
         subject: 'Thank You for Your Appointment Booking!',
         template: './thanks',
         context: {
+          username:username,
+          doctorname:doctorname,
           doctor: doctor,
           topic: topic,
           date: date.toDateString(),

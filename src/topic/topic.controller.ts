@@ -6,8 +6,7 @@ import { Topic } from '../schemas/topic.schema';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { Doctor } from '../schemas/doctor.schema';
 
-@UseGuards(JwtAuthGuard)
-@ApiBearerAuth()
+
 @ApiTags('topics')
 @Controller('topics')
 export class TopicController {
@@ -51,6 +50,7 @@ export class TopicController {
   async remove(@Param('id') id: string): Promise<void> {
     return this.topicService.remove(id);
   }
+  @UseGuards(JwtAuthGuard)
   @Get(':id/doctors')
   @ApiOperation({ summary: 'Get Doctor list by Topic' })
   async getDoctorsByTopic(@Param('id') id: string): Promise<Doctor[]> {

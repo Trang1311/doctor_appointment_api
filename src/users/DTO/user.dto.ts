@@ -16,4 +16,6 @@ export class usersDTO {
   @IsString()
   @IsOptional()
   phoneNumber?: string;
+  @IsOptional()
+  role?:string;
 }

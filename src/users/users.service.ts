@@ -14,11 +14,14 @@ export class UsersService {
     return this.userModel.find().exec();
   }
 
-  async findOne(username: string): Promise<User | undefined> {
+  async findOne(username: string): Promise<any> {
     return this.userModel.findOne({ username }).exec();
   }
 
   async create(createUserDto: usersDTO): Promise<User> {
+    if (!createUserDto.role) {
+      createUserDto.role = 'guest';
+    }
     const createdUser = new this.userModel(createUserDto);
     return createdUser.save();
   }

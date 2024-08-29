@@ -2,15 +2,17 @@ import { IsString, IsDate, IsEnum, IsMongoId, IsNotEmpty, IsDateString } from 'c
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateAppointmentDto {
-  @ApiProperty({ description: 'User ID associated with the appointment' })
-  @IsMongoId()
+  @ApiProperty({ description: 'User name associated with the appointment' })
   @IsNotEmpty()
-  userId: string;
+  username: string;
 
   @ApiProperty({ description: 'Doctor ID associated with the appointment' })
   @IsMongoId()
   @IsNotEmpty()
   doctor: string;
+  @ApiProperty({ description: 'Doctor name associated with the appointment' })
+  @IsNotEmpty()
+  doctorname: string;
 
   @ApiProperty({ description: 'Topic ID associated with the appointment' })
   @IsMongoId()

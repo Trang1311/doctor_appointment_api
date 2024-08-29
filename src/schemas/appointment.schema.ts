@@ -9,7 +9,10 @@ export class Appointment extends Document {
   doctor: Doctor;
 
   @Prop({ required: true })
-  userId: string; 
+  username: string; 
+
+  @Prop({ required: true })
+  doctorname: string; 
 
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Topic', required: true })
   topic: Topic;
