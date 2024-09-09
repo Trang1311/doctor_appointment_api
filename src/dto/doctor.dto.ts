@@ -1,4 +1,11 @@
-import { IsArray, IsNotEmpty, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
+import {
+  IsArray,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 import { CreateAvailableSlotDto } from './availableslot.dto';
 import { ApiProperty } from '@nestjs/swagger';
@@ -40,6 +47,25 @@ export class CreateDoctorDto {
   })
   @IsString({ each: true })
   topic: string[];
+
+  @ApiProperty()
+  @IsString()
+  clinicAddress: string;
+
+  @IsNotEmpty()
+  @ApiProperty()
+  @IsString()
+  phoneNumber: string;
+
+  @IsNotEmpty()
+  @ApiProperty()
+  @IsString()
+  contactEmail: string;
+
+  @IsOptional()
+  @ApiProperty()
+  @IsString()
+  lifeMotto?: string;
 }
 
 export class DailySlotDto {
@@ -95,4 +121,23 @@ export class UpdateDoctorDto {
   })
   @IsString({ each: true })
   topic?: string[];
+
+  @ApiProperty()
+  @IsString()
+  clinicAddress: string;
+
+  @IsNotEmpty()
+  @ApiProperty()
+  @IsString()
+  phoneNumber: string;
+
+  @IsNotEmpty()
+  @ApiProperty()
+  @IsString()
+  contactEmail: string;
+
+  @IsOptional()
+  @ApiProperty()
+  @IsString()
+  lifeMotto?: string;
 }

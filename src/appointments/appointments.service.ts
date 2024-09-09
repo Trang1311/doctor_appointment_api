@@ -48,6 +48,7 @@ export class AppointmentService {
     return appointment;
   }
 
+
   private async sendAppointmentEmail(appointment: Appointment): Promise<void> {
     const { doctorname,doctor,username, topic, date, startTime, endTime, appointmentType } = appointment;
     try {
@@ -73,13 +74,15 @@ export class AppointmentService {
   }
 
   private async sendConfirmationEmail(appointment: Appointment): Promise<void> {
-    const { date, startTime, endTime, appointmentType } = appointment;
+    const { doctorname,username,date, startTime, endTime, appointmentType } = appointment;
     try {
       await this.mailerService.sendMail({
         to: 'trang1311.proxy@gmail.com',
         subject: 'Appointment Confirmation',
         template: './confirmation',
         context: {
+          doctorname: doctorname,
+          username: username,
           date: date.toDateString(),
           startTime: startTime,
           endTime: endTime,

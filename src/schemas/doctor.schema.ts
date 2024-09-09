@@ -17,10 +17,28 @@ export class Doctor extends Document {
   @Prop({ required: true })
   qualifications: string;
 
-  @Prop({ type: [{ type: MongooseSchema.Types.ObjectId, ref: 'AvailableSlot' }], required: true })
+  @Prop({ required: true })
+  clinicAddress: string;
+
+  @Prop({ required: true })
+  phoneNumber: string;
+
+  @Prop({ required: true })
+  contactEmail: string;
+
+  @Prop()
+  lifeMotto: string;
+
+  @Prop({
+    type: [{ type: MongooseSchema.Types.ObjectId, ref: 'AvailableSlot' }],
+    required: true,
+  })
   dailySlots: MongooseSchema.Types.ObjectId[];
 
-  @Prop({ type: [{ type: MongooseSchema.Types.ObjectId, ref: 'Topic' }], required: true })
+  @Prop({
+    type: [{ type: MongooseSchema.Types.ObjectId, ref: 'Topic' }],
+    required: true,
+  })
   topic: MongooseSchema.Types.ObjectId[];
 }
 
