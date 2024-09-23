@@ -5,12 +5,15 @@ import { Topic } from '../schemas/topic.schema';
 import { CreateTopicDto, UpdateTopicDto } from '../dto/topic.dto';
 import { Doctor } from '../schemas/doctor.schema';
 import { ClientProxy, Client, Transport } from '@nestjs/microservices';
+import { PaginateWithSearch } from 'src/dto/paginate.dto';
 
 @Injectable()
 export class TopicService {
   private client: ClientProxy;
-  constructor(@InjectModel(Topic.name) private readonly topicModel: Model<Topic>,
-  @InjectModel(Doctor.name) private readonly doctorModel: Model<Doctor>) {}
+  constructor(
+    @InjectModel(Topic.name) private readonly topicModel: Model<Topic>,
+    @InjectModel(Doctor.name) private readonly doctorModel: Model<Doctor>,
+  ) {}
 
   async create(createTopicDto: CreateTopicDto): Promise<Topic> {
     const newTopic = new this.topicModel(createTopicDto);
@@ -50,7 +53,27 @@ export class TopicService {
       throw new NotFoundException(`Topic with ID ${id} not found`);
     }
   }
-  async findDoctorsByTopic(topicId: string): Promise<Doctor[]> {
-    return this.doctorModel.find({ topic: topicId }).exec();
+  async findDoctorsByTopic(
+    topicId: string,
+    paginateDto: PaginateWithSearch,
+  ): Promise<any> {
+    const { current, limit } = paginateDto;
+    const skip = (current - 1) * limit;
+
+    // Tạo điều kiện tìm kiếm
+    const filter: any = { topic: topicId };
+    // Thực hiện phân trang và tìm kiếm
+    const [doctors, total] = await Promise.all([
+      this.doctorModel.find(filter).skip(skip).limit(limit).exec(),
+      this.doctorModel.countDocuments(filter).exec(),
+    ]);
+
+    return {
+      total,
+      current,
+      limit,
+      totalPages: Math.ceil(total / limit),
+      doctors,
+    };
   }
 }

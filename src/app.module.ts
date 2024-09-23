@@ -12,10 +12,17 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
 import { AudioModule } from './audio/audio.module';
 import { join } from 'path';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { DashboardModule } from './dashboard/dashboard.module';
 
 @Module({
-  imports: [AuthModule, DoctorModule, AppointmentsModule, TopicModule,GatewayModule,UsersModule,AudioModule,
+  imports: [
     AuthModule,
+    DoctorModule,
+    AppointmentsModule,
+    TopicModule,
+    GatewayModule,
+    UsersModule,
+    AudioModule,
     ConfigModule.forRoot(),
     MongooseModule.forRoot('mongodb://127.0.0.1:27017/doctor_appointment'),
     MailerModule.forRoot({
@@ -42,6 +49,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
       rootPath: join(__dirname, '..', 'uploads'),
       serveRoot: '/',
     }),
+    DashboardModule,
   ],
 })
 export class AppModule {}

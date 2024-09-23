@@ -1,4 +1,11 @@
-import { IsString, IsDate, IsEnum, IsMongoId, IsNotEmpty, IsDateString } from 'class-validator';
+import {
+  IsString,
+  IsDate,
+  IsEnum,
+  IsMongoId,
+  IsNotEmpty,
+  IsDateString,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateAppointmentDto {
@@ -24,15 +31,19 @@ export class CreateAppointmentDto {
   @IsNotEmpty()
   date: string;
 
-  @ApiProperty({ description: 'Appointment time slot, e.g., "10:00 AM - 11:00 AM"' })
+  @ApiProperty({
+    description: 'Appointment time slot, e.g., "10:00 AM - 11:00 AM"',
+  })
   @IsString()
   @IsNotEmpty()
-  startTime: string; 
+  startTime: string;
 
-  @ApiProperty({ description: 'Appointment time slot, e.g., "10:00 AM - 11:00 AM"' })
+  @ApiProperty({
+    description: 'Appointment time slot, e.g., "10:00 AM - 11:00 AM"',
+  })
   @IsString()
   @IsNotEmpty()
-  endTime: string;  
+  endTime: string;
 
   @ApiProperty({ description: 'Appointment type: In-Person or Video Call' })
   @IsEnum(['In-Person', 'Video Call'])
@@ -41,7 +52,10 @@ export class CreateAppointmentDto {
 }
 
 export class UpdateAppointmentDto {
-  @ApiProperty({ description: 'Appointment status: Pending, Confirmed, or Canceled' })
+  @ApiProperty({
+    description: 'Appointment status: Pending, Confirmed, or Canceled',
+    example: 'e.g:Canceled',
+  })
   @IsEnum(['Pending', 'Confirmed', 'Canceled'])
   status: string;
 }

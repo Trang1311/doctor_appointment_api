@@ -1,5 +1,3 @@
-// src/services/doctor.service.ts
-
 import {
   BadRequestException,
   Injectable,
@@ -11,7 +9,12 @@ import { Doctor } from '../schemas/doctor.schema';
 import { CreateDoctorDto, UpdateDoctorDto } from '../dto/doctor.dto';
 import { AvailableSlot } from '../schemas/availableslot.schema';
 import { Appointment } from '../schemas/appointment.schema';
-
+import { User } from '../users/schemas/user.schema';
+import { usersDTO } from 'src/users/DTO/user.dto';
+import { UsersService } from 'src/users/users.service';
+import { throwError } from 'rxjs';
+import { PaginateWithSearch } from 'src/dto/paginate.dto';
+import { AuthService } from 'src/auth/auth.service';
 @Injectable()
 export class DoctorService {
   constructor(
@@ -20,32 +23,64 @@ export class DoctorService {
     private readonly availableSlotModel: Model<AvailableSlot>,
     @InjectModel(Appointment.name)
     private readonly appointmentModel: Model<Appointment>,
+    @InjectModel(User.name) private readonly userModel: Model<User>,
+    private readonly userService: UsersService,
+    private readonly authService: AuthService,
   ) {}
 
   async create(createDoctorDto: CreateDoctorDto): Promise<Doctor> {
-    const dailySlots = createDoctorDto.dailySlots.flatMap((dateSlot) =>
-      dateSlot.slots.map((slot) => ({
-        startTime: slot.startTime,
-        endTime: slot.endTime,
-        date: dateSlot.date,
-      })),
-    );
-
-    const savedSlots = await Promise.all(
-      dailySlots.map((slot) => new this.availableSlotModel(slot).save()),
-    );
+    if (!createDoctorDto.role) {
+      createDoctorDto.role = 'doctor';
+    }
+    // const hashedPassword = await this.authService.hashPassword(
+    //   createDoctorDto.password,
+    // );
+    // console.log('Hashed password before saving:', hashedPassword);
+    const createUserDto: usersDTO = {
+      name: createDoctorDto.name,
+      username: createDoctorDto.username,
+      password: createDoctorDto.password,
+      email: createDoctorDto.email,
+      gender: createDoctorDto.gender,
+      phoneNumber: createDoctorDto.phoneNumber,
+      role: 'doctor',
+    };
+    const user = await this.userService.create(createUserDto);
     const newDoctor = new this.doctorModel({
       ...createDoctorDto,
-      dailySlots: savedSlots.map((slot) => slot._id),
+      password: user.password,
+      _id: user._id,
     });
 
     return newDoctor.save();
   }
+  async findAll(paginateDto: PaginateWithSearch): Promise<any> {
+    const { current, limit, Search } = paginateDto;
 
-  async findAll(): Promise<Doctor[]> {
-    return this.doctorModel.find().populate('dailySlots').exec();
+    const query: any = {};
+
+    if (Search) {
+      query.$or = [
+        { name: { $regex: new RegExp(Search, 'i') } },
+        { specialization: { $regex: new RegExp(Search, 'i') } },
+      ];
+    }
+    const [doctors, total] = await Promise.all([
+      this.doctorModel
+        .find(query)
+        .skip(current * limit)
+        .limit(limit)
+        .exec(),
+      this.doctorModel.countDocuments(query).exec(),
+    ]);
+
+    return {
+      data: doctors,
+      total,
+      current,
+      limit,
+    };
   }
-
   async findById(id: string): Promise<Doctor> {
     const doctor = await this.doctorModel
       .findById(id)
@@ -56,7 +91,6 @@ export class DoctorService {
     }
     return doctor;
   }
-
   async update(id: string, updateDoctorDto: UpdateDoctorDto): Promise<Doctor> {
     let newSlotIds: string[] = [];
 

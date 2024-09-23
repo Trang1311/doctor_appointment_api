@@ -1,5 +1,6 @@
 import {
   IsArray,
+  IsEmail,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -12,10 +13,28 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateDoctorDto {
   @IsNotEmpty()
-  @ApiProperty()
+  @ApiProperty({
+    example: 'PTHTrang',
+  })
   @IsString()
   name: string;
-
+  @ApiProperty()
+  @IsNotEmpty()
+  username?: string;
+  @ApiProperty()
+  @IsNotEmpty()
+  password?: string;
+  @ApiProperty()
+  @IsEmail()
+  email?: string;
+  @ApiProperty()
+  gender?: string;
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  phoneNumber?: string;
+  @IsOptional()
+  role?: string;
   @IsNotEmpty()
   @ApiProperty()
   @IsString()
@@ -31,7 +50,6 @@ export class CreateDoctorDto {
   @IsString()
   qualifications: string;
 
-  @IsArray()
   @ApiProperty({
     type: [Object],
     description: 'Array of daily slots with available times',
@@ -40,7 +58,6 @@ export class CreateDoctorDto {
   @Type(() => DailySlotDto)
   dailySlots: DailySlotDto[];
 
-  @IsArray()
   @ApiProperty({
     type: [String],
     description: 'List of topic IDs',
@@ -51,17 +68,6 @@ export class CreateDoctorDto {
   @ApiProperty()
   @IsString()
   clinicAddress: string;
-
-  @IsNotEmpty()
-  @ApiProperty()
-  @IsString()
-  phoneNumber: string;
-
-  @IsNotEmpty()
-  @ApiProperty()
-  @IsString()
-  contactEmail: string;
-
   @IsOptional()
   @ApiProperty()
   @IsString()
@@ -105,7 +111,6 @@ export class UpdateDoctorDto {
   @IsString()
   qualifications?: string;
 
-  @IsOptional()
   @ApiProperty({
     type: [DailySlotDto],
     description: 'Updated array of available slots for each day',
@@ -120,6 +125,7 @@ export class UpdateDoctorDto {
     description: 'Updated list of topic IDs',
   })
   @IsString({ each: true })
+  @IsOptional()
   topic?: string[];
 
   @ApiProperty()
@@ -134,7 +140,7 @@ export class UpdateDoctorDto {
   @IsNotEmpty()
   @ApiProperty()
   @IsString()
-  contactEmail: string;
+  email: string;
 
   @IsOptional()
   @ApiProperty()

@@ -2,7 +2,9 @@ import { IsString, IsNotEmpty, IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateTopicDto {
-  @ApiProperty({ description: 'Topic name, e.g., "Anxiety and Stress Management"' })
+  @ApiProperty({
+    description: 'Topic name, e.g., "Anxiety and Stress Management"',
+  })
   @IsString()
   @IsNotEmpty()
   name: string;
@@ -11,6 +13,9 @@ export class CreateTopicDto {
   @IsString()
   @IsNotEmpty()
   description: string;
+
+  @ApiProperty()
+  img: string;
 }
 
 export class UpdateTopicDto {

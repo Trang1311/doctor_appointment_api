@@ -7,6 +7,20 @@ import { AvailableSlot } from './availableslot.schema';
 export class Doctor extends Document {
   @Prop({ required: true })
   name: string;
+  @Prop()
+  image: string;
+  @Prop({ required: true })
+  username: string;
+  @Prop({ required: true })
+  password: string;
+  @Prop({ required: true, unique: true })
+  email: string;
+  @Prop()
+  phoneNumber: string;
+  @Prop()
+  gender: string;
+  @Prop()
+  role: string;
 
   @Prop({ required: true })
   specialization: string;
@@ -20,15 +34,8 @@ export class Doctor extends Document {
   @Prop({ required: true })
   clinicAddress: string;
 
-  @Prop({ required: true })
-  phoneNumber: string;
-
-  @Prop({ required: true })
-  contactEmail: string;
-
   @Prop()
   lifeMotto: string;
-
   @Prop({
     type: [{ type: MongooseSchema.Types.ObjectId, ref: 'AvailableSlot' }],
     required: true,

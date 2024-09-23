@@ -8,6 +8,9 @@ export class Topic extends Document {
 
   @Prop()
   description: string;
+
+  @Prop()
+  img: string;
 }
 
 export const TopicSchema = SchemaFactory.createForClass(Topic);
