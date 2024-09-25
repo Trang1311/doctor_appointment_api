@@ -37,6 +37,7 @@ export class DoctorService {
     // );
     // console.log('Hashed password before saving:', hashedPassword);
     const createUserDto: usersDTO = {
+      imageURL: createDoctorDto.imageURL,
       name: createDoctorDto.name,
       username: createDoctorDto.username,
       password: createDoctorDto.password,

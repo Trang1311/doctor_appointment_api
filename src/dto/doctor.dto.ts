@@ -72,6 +72,9 @@ export class CreateDoctorDto {
   @ApiProperty()
   @IsString()
   lifeMotto?: string;
+
+  @ApiProperty()
+  imageURL: string;
 }
 
 export class DailySlotDto {

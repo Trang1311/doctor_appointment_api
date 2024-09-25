@@ -4,22 +4,33 @@ import { IsNotEmpty, IsEmail, IsString, IsOptional } from 'class-validator';
 export class usersDTO {
   @ApiProperty()
   @IsNotEmpty()
-  username?: string;
+  username: string;
+
   @ApiProperty()
-  password?: string;
+  password: string;
+
   @ApiProperty()
   @IsOptional()
-  name: string;
+  name?: string;
+
+  @ApiProperty({ type: 'string', format: 'binary' })
+  image?: Express.Multer.File;
+
+  @ApiProperty()
+  imageURL?: string;
+
   @ApiProperty()
   @IsEmail()
-  email?: string;
+  email: string;
+
   @ApiProperty()
   gender?: string;
+
   @ApiProperty()
   @IsString()
   @IsOptional()
   phoneNumber?: string;
+
   @IsOptional()
   role?: string;
-  
 }

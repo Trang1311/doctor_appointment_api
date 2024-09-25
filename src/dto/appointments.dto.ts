@@ -9,6 +9,11 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateAppointmentDto {
+  @ApiProperty()
+  @IsMongoId()
+  @IsNotEmpty()
+  userid: string;
+
   @ApiProperty({ description: 'User name associated with the appointment' })
   @IsNotEmpty()
   username: string;
@@ -16,7 +21,8 @@ export class CreateAppointmentDto {
   @ApiProperty({ description: 'Doctor ID associated with the appointment' })
   @IsMongoId()
   @IsNotEmpty()
-  doctor: string;
+  doctorid: string;
+
   @ApiProperty({ description: 'Doctor name associated with the appointment' })
   @IsNotEmpty()
   doctorname: string;

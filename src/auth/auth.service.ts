@@ -22,10 +22,6 @@ export class AuthService {
     password: string,
     hashedPassword: string,
   ): Promise<boolean> {
-    console.log('Input password length:', password.length);
-    console.log('Hashed password length:', hashedPassword.length);
-    console.log('Input password:', password);
-    console.log('Hashed password:', hashedPassword);
     return bcrypt.compare(password, hashedPassword);
   }
   async validateUser(username: string, password: string): Promise<any> {
@@ -38,8 +34,6 @@ export class AuthService {
     }
 
     const isMatch = await this.comparePasswords(password, user.password);
-    console.log('Password match:', isMatch);
-
     if (isMatch) {
       const { password, ...result } = user;
       return result;
@@ -69,7 +63,7 @@ export class AuthService {
   }
 
   async validateGoogleUser(profile: any): Promise<any> {
-    const { email, name } = profile;
+    const { email, name, photos } = profile;
     let user = await this.usersService.findOneByEmail(email);
 
     if (!user) {
@@ -79,6 +73,7 @@ export class AuthService {
         password: '',
         email,
         role: 'guest',
+        imageURL: photos[0].value,
       });
     }
     const { password, ...result } = user;

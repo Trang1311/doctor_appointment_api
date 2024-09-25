@@ -8,7 +8,7 @@ export class Doctor extends Document {
   @Prop({ required: true })
   name: string;
   @Prop()
-  image: string;
+  imageURL: string;
   @Prop({ required: true })
   username: string;
   @Prop({ required: true })

@@ -1,6 +1,9 @@
-import { Controller, Post, Body, Patch, Param } from '@nestjs/common';
+import { Controller, Post, Body, Patch, Param, Get } from '@nestjs/common';
 import { AppointmentService } from './appointments.service';
-import { CreateAppointmentDto, UpdateAppointmentDto } from '../dto/appointments.dto';
+import {
+  CreateAppointmentDto,
+  UpdateAppointmentDto,
+} from '../dto/appointments.dto';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 
 @ApiTags('appointments')
@@ -16,8 +19,25 @@ export class AppointmentController {
   }
 
   @Patch(':id/confirm')
-  @ApiOperation({ summary: 'Confirm an appointment and send email notification' })
-  async confirm(@Param('id') id: string, @Body() updateAppointmentDto: UpdateAppointmentDto) {
+  @ApiOperation({
+    summary: 'Confirm an appointment and send email notification',
+  })
+  async confirm(
+    @Param('id') id: string,
+    @Body() updateAppointmentDto: UpdateAppointmentDto,
+  ) {
     return this.appointmentService.updateAppointment(id, updateAppointmentDto);
+  }
+
+  @Get('user/:userid')
+  @ApiOperation({ summary: 'Find appointments by user ID' })
+  async findByUserId(@Param('userid') userid: string) {
+    return this.appointmentService.findAppointmentsByUserId(userid);
+  }
+
+  @Get('doctor/:doctorid')
+  @ApiOperation({ summary: 'Find appointments by doctor ID' })
+  async findByDoctorId(@Param('doctorid') doctorid: string) {
+    return this.appointmentService.findAppointmentsByDoctorId(doctorid);
   }
 }

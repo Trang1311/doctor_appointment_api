@@ -31,7 +31,6 @@ mongoose
 
 const generateDoctors = async () => {
   try {
-    // Fetch available slot IDs and topic IDs
     const availableSlots = await AvailableSlot.find().select('_id');
     const topics = await Topics.find().select('_id');
 

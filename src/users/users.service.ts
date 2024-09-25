@@ -10,6 +10,8 @@ import { Model } from 'mongoose';
 import { User } from './schemas/user.schema';
 import { usersDTO } from './DTO/user.dto';
 import { AuthService } from '../auth/auth.service';
+import { cloudinary } from 'src/cloudinary/cloudinary.config';
+import { UpdateUserDto } from './DTO/updateuser.dto';
 
 @Injectable()
 export class UsersService {
@@ -37,16 +39,20 @@ export class UsersService {
     const createdUser = new this.userModel(createUserDto);
     return createdUser.save();
   }
-  async update(id: string, updateUserDto: usersDTO): Promise<User> {
+  async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
     const user = await this.userModel.findById(id);
     if (!user) {
       throw new NotFoundException(`User with ID "${id}" not found`);
     }
+
     if (updateUserDto.password) {
       const hashedPassword = await this.authService.hashPassword(
         updateUserDto.password,
       );
       updateUserDto.password = hashedPassword;
+    }
+    if (updateUserDto.image) {
+      updateUserDto.imageURL = updateUserDto.image.path;
     }
     Object.assign(user, updateUserDto);
     return user.save();

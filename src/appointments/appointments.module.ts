@@ -8,7 +8,9 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: Appointment.name, schema: AppointmentSchema }]), 
+    MongooseModule.forFeature([
+      { name: Appointment.name, schema: AppointmentSchema },
+    ]),
     MailerModule.forRoot({
       transport: {
         host: 'smtp.gmail.com',
@@ -23,7 +25,7 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
       },
       template: {
         dir: __dirname + '/templates',
-        adapter: new HandlebarsAdapter(), // or another template adapter
+        adapter: new HandlebarsAdapter(),
         options: {
           strict: true,
         },
@@ -31,6 +33,6 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
     }),
   ],
   controllers: [AppointmentController],
-  providers: [AppointmentService]
+  providers: [AppointmentService],
 })
 export class AppointmentsModule {}

@@ -6,6 +6,7 @@ import { Transport } from '@nestjs/microservices';
 import { join } from 'path';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import * as requestIp from 'request-ip';
+import * as dotenv from 'dotenv';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -42,6 +43,13 @@ async function bootstrap() {
   app.useStaticAssets(join(__dirname, '..', 'sounds'));
 
   app.use(requestIp.mw());
+  dotenv.config();
+  console.log('Cloudinary Config:', {
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+  });
+
   await app.startAllMicroservices();
   await app.listen(3000, '0.0.0.0');
 }

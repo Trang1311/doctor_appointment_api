@@ -14,7 +14,7 @@ export class User extends Document {
   @Prop()
   name: string;
   @Prop()
-  image: string;
+  imageURL: string;
   @Prop({ required: true })
   @IsEmail()
   email: string;

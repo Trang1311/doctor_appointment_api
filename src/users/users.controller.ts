@@ -5,16 +5,25 @@ import {
   Get,
   Param,
   Delete,
-  Req,
-  Res,
   Put,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { usersDTO } from './DTO/user.dto';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiConsumes,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { AuthService } from '../auth/auth.service';
-import { Request, Response } from 'express';
 import { OAuth2Client } from 'google-auth-library';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { Request } from 'express';
+import { UpdateUserDto } from './DTO/updateuser.dto';
+import { storage } from 'src/cloudinary/cloudinary.storage';
 
 @ApiTags('Users')
 @Controller('users')
@@ -40,10 +49,18 @@ export class UsersController {
   }
 
   @Put('update/:id')
-  async update(@Param('id') id: string, @Body() updateUserDto: usersDTO) {
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileInterceptor('image', { storage: storage }))
+  async update(
+    @Param('id') id: string,
+    @UploadedFile() file: Express.Multer.File,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    if (file) {
+      updateUserDto.image = file;
+    }
     return this.usersService.update(id, updateUserDto);
   }
-
   @Delete(':id')
   async remove(@Param('id') id: string) {
     return this.usersService.remove(id);
