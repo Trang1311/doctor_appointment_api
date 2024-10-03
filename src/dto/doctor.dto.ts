@@ -95,58 +95,57 @@ export class DailySlotDto {
 
 export class UpdateDoctorDto {
   @IsOptional()
-  @ApiProperty()
   @IsString()
   name?: string;
 
   @IsOptional()
-  @ApiProperty()
   @IsString()
   specialization?: string;
 
   @IsOptional()
-  @ApiProperty()
   @IsNumber()
   experience?: number;
 
   @IsOptional()
-  @ApiProperty()
   @IsString()
   qualifications?: string;
 
+  @ApiProperty({ type: 'string', format: 'binary' })
+  @IsOptional()
+  image?: Express.Multer.File;
+
+  @IsOptional()
+  imageURL?: string;
+
   @ApiProperty({
-    type: [DailySlotDto],
-    description: 'Updated array of available slots for each day',
+    type: [Object],
+    description: 'Array of daily slots with available times',
   })
   @ValidateNested({ each: true })
   @Type(() => DailySlotDto)
-  dailySlots?: DailySlotDto[];
+  dailySlots: DailySlotDto[];
 
-  @IsOptional()
   @ApiProperty({
     type: [String],
-    description: 'Updated list of topic IDs',
+    description: 'List of topic IDs',
   })
-  @IsString({ each: true })
   @IsOptional()
-  topic?: string[];
+  @IsString({ each: true })
+  topic: string[];
 
-  @ApiProperty()
+  @IsOptional()
   @IsString()
   clinicAddress: string;
 
-  @IsNotEmpty()
-  @ApiProperty()
   @IsString()
+  @IsOptional()
   phoneNumber: string;
 
-  @IsNotEmpty()
-  @ApiProperty()
   @IsString()
+  @IsOptional()
   email: string;
 
   @IsOptional()
-  @ApiProperty()
   @IsString()
   lifeMotto?: string;
 }

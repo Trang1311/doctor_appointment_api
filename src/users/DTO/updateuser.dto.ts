@@ -13,7 +13,7 @@ export class UpdateUserDto {
 
   @ApiProperty({ type: 'string', format: 'binary' })
   @IsOptional()
-  image?: Express.Multer.File; // Đây là cách đúng
+  image?: Express.Multer.File;
 
   @IsOptional()
   imageURL?: string;

@@ -23,7 +23,7 @@ import { OAuth2Client } from 'google-auth-library';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Request } from 'express';
 import { UpdateUserDto } from './DTO/updateuser.dto';
-import { storage } from 'src/cloudinary/cloudinary.storage';
+import { userStorage } from 'src/cloudinary/cloudinary.storage';
 
 @ApiTags('Users')
 @Controller('users')
@@ -50,7 +50,7 @@ export class UsersController {
 
   @Put('update/:id')
   @ApiConsumes('multipart/form-data')
-  @UseInterceptors(FileInterceptor('image', { storage: storage }))
+  @UseInterceptors(FileInterceptor('image', { storage: userStorage }))
   async update(
     @Param('id') id: string,
     @UploadedFile() file: Express.Multer.File,

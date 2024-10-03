@@ -1,4 +1,3 @@
-// doctor.schema.ts
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema } from 'mongoose';
 import { AvailableSlot } from './availableslot.schema';
@@ -34,13 +33,10 @@ export class Doctor extends Document {
   @Prop({ required: true })
   clinicAddress: string;
 
-  @Prop()
-  lifeMotto: string;
   @Prop({
     type: [{ type: MongooseSchema.Types.ObjectId, ref: 'AvailableSlot' }],
-    required: true,
   })
-  dailySlots: MongooseSchema.Types.ObjectId[];
+  dailySlots: AvailableSlot[];
 
   @Prop({
     type: [{ type: MongooseSchema.Types.ObjectId, ref: 'Topic' }],

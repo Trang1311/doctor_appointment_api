@@ -32,10 +32,6 @@ export class DoctorService {
     if (!createDoctorDto.role) {
       createDoctorDto.role = 'doctor';
     }
-    // const hashedPassword = await this.authService.hashPassword(
-    //   createDoctorDto.password,
-    // );
-    // console.log('Hashed password before saving:', hashedPassword);
     const createUserDto: usersDTO = {
       imageURL: createDoctorDto.imageURL,
       name: createDoctorDto.name,
@@ -47,14 +43,28 @@ export class DoctorService {
       role: 'doctor',
     };
     const user = await this.userService.create(createUserDto);
+    const newSlots = createDoctorDto.dailySlots.flatMap((dateSlot) =>
+      dateSlot.slots.map((slot) => ({
+        startTime: slot.startTime,
+        endTime: slot.endTime,
+        date: dateSlot.date,
+      })),
+    );
+
+    const savedSlots = await Promise.all(
+      newSlots.map((slot) => new this.availableSlotModel(slot).save()),
+    );
+
     const newDoctor = new this.doctorModel({
       ...createDoctorDto,
       password: user.password,
       _id: user._id,
+      dailySlots: savedSlots.map((slot) => slot._id),
     });
 
     return newDoctor.save();
   }
+
   async findAll(paginateDto: PaginateWithSearch): Promise<any> {
     const { current, limit, Search } = paginateDto;
 
@@ -93,8 +103,16 @@ export class DoctorService {
     return doctor;
   }
   async update(id: string, updateDoctorDto: UpdateDoctorDto): Promise<Doctor> {
-    let newSlotIds: string[] = [];
+    const existingDoctor = await this.doctorModel
+      .findById(id)
+      .populate('dailySlots')
+      .exec();
 
+    if (!existingDoctor) {
+      throw new NotFoundException(`Doctor with ID "${id}" not found`);
+    }
+
+    let newSlotIds: string[] = [];
     if (updateDoctorDto.dailySlots) {
       const newSlots = updateDoctorDto.dailySlots.flatMap((dateSlot) =>
         dateSlot.slots.map((slot) => ({
@@ -103,27 +121,33 @@ export class DoctorService {
           date: dateSlot.date,
         })),
       );
-
       const savedSlots = await Promise.all(
         newSlots.map((slot) => new this.availableSlotModel(slot).save()),
       );
 
       newSlotIds = savedSlots.map((slot) => slot._id.toString());
     }
+    const mergedSlotIds = [
+      ...existingDoctor.dailySlots.map((slot) => slot._id.toString()),
+      ...newSlotIds,
+    ];
 
+    if (updateDoctorDto.image) {
+      updateDoctorDto.imageURL = updateDoctorDto.image.path;
+    }
     const updatedDoctor = await this.doctorModel
       .findByIdAndUpdate(
         id,
         {
           ...updateDoctorDto,
-          dailySlots: newSlotIds.length ? newSlotIds : undefined,
+          dailySlots: mergedSlotIds.length ? mergedSlotIds : undefined,
         },
         { new: true },
       )
       .exec();
 
     if (!updatedDoctor) {
-      throw new NotFoundException(`Doctor with ID ${id} not found`);
+      throw new NotFoundException(`Doctor with ID "${id}" not found`);
     }
 
     return updatedDoctor;

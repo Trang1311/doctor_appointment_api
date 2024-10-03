@@ -12,8 +12,6 @@ export class CreateAvailableSlotDto {
   @IsString()
   endTime: string;
 }
-
-
 export class UpdateAvailableSlotDto {
   @IsString()
   startTime?: string;
@@ -22,5 +20,5 @@ export class UpdateAvailableSlotDto {
   endTime?: string;
 
   @IsDateString()
-  date?: Date; // Ensure this field is included
+  date?: Date;
 }

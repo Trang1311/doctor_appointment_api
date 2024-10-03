@@ -10,7 +10,6 @@ import { Model } from 'mongoose';
 import { User } from './schemas/user.schema';
 import { usersDTO } from './DTO/user.dto';
 import { AuthService } from '../auth/auth.service';
-import { cloudinary } from 'src/cloudinary/cloudinary.config';
 import { UpdateUserDto } from './DTO/updateuser.dto';
 
 @Injectable()
