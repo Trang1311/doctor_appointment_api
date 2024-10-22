@@ -27,6 +27,17 @@ export class UsersService {
     return this.userModel.findOne({ username }).exec();
   }
 
+  async findByUsernameOrName(searchTerm: string): Promise<User | null> {
+    return this.userModel
+      .findOne({
+        $or: [{ username: searchTerm }, { name: searchTerm }],
+      })
+      .exec();
+  }
+  async findUserbyId(id: string): Promise<User | null> {
+    return this.userModel.findById(id).exec();
+  }
+
   async create(createUserDto: usersDTO): Promise<User> {
     if (!createUserDto.role) {
       createUserDto.role = 'guest';

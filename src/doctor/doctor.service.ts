@@ -32,6 +32,7 @@ export class DoctorService {
     if (!createDoctorDto.role) {
       createDoctorDto.role = 'doctor';
     }
+  
     const createUserDto: usersDTO = {
       imageURL: createDoctorDto.imageURL,
       name: createDoctorDto.name,
@@ -42,28 +43,30 @@ export class DoctorService {
       phoneNumber: createDoctorDto.phoneNumber,
       role: 'doctor',
     };
+  
     const user = await this.userService.create(createUserDto);
-    const newSlots = createDoctorDto.dailySlots.flatMap((dateSlot) =>
+    const newSlots = (createDoctorDto.dailySlots || []).flatMap((dateSlot) =>
       dateSlot.slots.map((slot) => ({
         startTime: slot.startTime,
         endTime: slot.endTime,
         date: dateSlot.date,
       })),
     );
-
+  
     const savedSlots = await Promise.all(
       newSlots.map((slot) => new this.availableSlotModel(slot).save()),
     );
-
+  
     const newDoctor = new this.doctorModel({
       ...createDoctorDto,
       password: user.password,
       _id: user._id,
       dailySlots: savedSlots.map((slot) => slot._id),
     });
-
+  
     return newDoctor.save();
   }
+  
 
   async findAll(paginateDto: PaginateWithSearch): Promise<any> {
     const { current, limit, Search } = paginateDto;

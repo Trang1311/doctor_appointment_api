@@ -24,6 +24,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { Request } from 'express';
 import { UpdateUserDto } from './DTO/updateuser.dto';
 import { userStorage } from 'src/cloudinary/cloudinary.storage';
+import { User } from './schemas/user.schema';
 
 @ApiTags('Users')
 @Controller('users')
@@ -47,7 +48,15 @@ export class UsersController {
   async findOne(@Param('username') username: string) {
     return this.usersService.findOne(username);
   }
+  @Get('search/:term')
+  async findByUsernameOrName(@Param('term') term: string) {
+    return this.usersService.findByUsernameOrName(term);
+  }
 
+  @Get('userid/:id')
+  async findUserById(@Param('id') id: string): Promise<User> {
+    return this.usersService.findUserbyId(id);
+  }
   @Put('update/:id')
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(FileInterceptor('image', { storage: userStorage }))

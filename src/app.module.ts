@@ -13,6 +13,8 @@ import { AudioModule } from './audio/audio.module';
 import { join } from 'path';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { DashboardModule } from './dashboard/dashboard.module';
+import { OpenaiModule } from './openai/openai.module';
+import { ChatRoomModule } from './chatroom/chatroom.module';
 
 @Module({
   imports: [
@@ -23,6 +25,8 @@ import { DashboardModule } from './dashboard/dashboard.module';
     GatewayModule,
     UsersModule,
     AudioModule,
+    OpenaiModule,
+    ChatRoomModule,
     ConfigModule.forRoot(),
     MongooseModule.forRoot('mongodb://127.0.0.1:27017/doctor_appointment'),
     MailerModule.forRoot({
