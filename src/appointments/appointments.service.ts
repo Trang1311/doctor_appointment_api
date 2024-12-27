@@ -11,6 +11,7 @@ import {
 } from '../dto/appointments.dto';
 import { Appointment } from '../schemas/appointment.schema';
 import { MailerService } from '@nestjs-modules/mailer';
+import { User } from 'src/users/schemas/user.schema';
 
 @Injectable()
 export class AppointmentService {
@@ -18,6 +19,8 @@ export class AppointmentService {
     @InjectModel(Appointment.name)
     private readonly appointmentModel: Model<Appointment>,
     private readonly mailerService: MailerService,
+    @InjectModel(User.name)
+    private readonly userModel: Model<User>,
   ) {}
 
   // Create a new appointment
@@ -27,8 +30,6 @@ export class AppointmentService {
     const { doctorid, userid, date, startTime, endTime, ...rest } =
       createAppointmentDto;
     const appointmentDate = new Date(`${date}T${startTime}:00`);
-
-    // Check if the appointment slot is already booked
     const existingAppointment = await this.appointmentModel.findOne({
       doctorid: doctorid,
       date: appointmentDate,
@@ -41,8 +42,10 @@ export class AppointmentService {
         'The selected time slot is not available. Please choose another time.',
       );
     }
-
-    // Create new appointment
+    const user = await this.userModel.findById(userid);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
     const newAppointment = new this.appointmentModel({
       ...rest,
       userid,
@@ -51,9 +54,7 @@ export class AppointmentService {
       startTime,
       endTime,
     });
-
-    // Send confirmation email to the user
-    await this.sendAppointmentEmail(newAppointment);
+    await this.sendAppointmentEmail(newAppointment, user.email);
 
     return newAppointment.save();
   }
@@ -71,14 +72,24 @@ export class AppointmentService {
     if (!appointment) {
       throw new NotFoundException(`Appointment with ID "${id}" not found`);
     }
-
+    const user = await this.userModel.findById(appointment.userid);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
     if (updateAppointmentDto.status === 'Confirmed') {
-      await this.sendConfirmationEmail(appointment);
+      await this.sendConfirmationEmail(appointment, user.email);
+    } else if (updateAppointmentDto.status === 'Completed') {
+      await this.sendCompletedEmail(appointment, user.email);
+    } else if (updateAppointmentDto.status === 'Canceled') {
+      await this.sendCanceledEmail(appointment, user.email);
     }
 
     return appointment;
   }
 
+  async findAppointmentsById(_id: string): Promise<Appointment[]> {
+    return this.appointmentModel.find({ _id }).exec();
+  }
   async findAppointmentsByUserId(userid: string): Promise<Appointment[]> {
     return this.appointmentModel.find({ userid }).exec();
   }
@@ -87,7 +98,10 @@ export class AppointmentService {
     return this.appointmentModel.find({ doctorid }).exec();
   }
 
-  private async sendAppointmentEmail(appointment: Appointment): Promise<void> {
+  private async sendAppointmentEmail(
+    appointment: Appointment,
+    email: string,
+  ): Promise<void> {
     const {
       username,
       doctorname,
@@ -99,7 +113,7 @@ export class AppointmentService {
     } = appointment;
     try {
       await this.mailerService.sendMail({
-        to: 'trang1311.proxy@gmail.com',
+        to: email,
         subject: 'Thank You for Your Appointment Booking!',
         template: './thanks',
         context: {
@@ -117,12 +131,16 @@ export class AppointmentService {
       console.error('Error sending appointment booking email:', error);
     }
   }
-  private async sendConfirmationEmail(appointment: Appointment): Promise<void> {
+
+  private async sendConfirmationEmail(
+    appointment: Appointment,
+    email: string,
+  ): Promise<void> {
     const { doctorname, username, date, startTime, endTime, appointmentType } =
       appointment;
     try {
       await this.mailerService.sendMail({
-        to: 'trang1311.proxy@gmail.com',
+        to: email,
         subject: 'Appointment Confirmation',
         template: './confirmation',
         context: {
@@ -137,6 +155,50 @@ export class AppointmentService {
       console.log('Appointment confirmation email sent successfully');
     } catch (error) {
       console.error('Error sending appointment confirmation email:', error);
+    }
+  }
+
+  private async sendCompletedEmail(
+    appointment: Appointment,
+    email: string,
+  ): Promise<void> {
+    const { doctorname, username, date } = appointment;
+    try {
+      await this.mailerService.sendMail({
+        to: email,
+        subject: 'Appointment Completed',
+        template: './completed',
+        context: {
+          doctorname,
+          username,
+          date: date.toDateString(),
+        },
+      });
+      console.log('Appointment completion email sent successfully');
+    } catch (error) {
+      console.error('Error sending appointment completion email:', error);
+    }
+  }
+
+  private async sendCanceledEmail(
+    appointment: Appointment,
+    email: string,
+  ): Promise<void> {
+    const { doctorname, username, date } = appointment;
+    try {
+      await this.mailerService.sendMail({
+        to: email,
+        subject: 'Appointment Canceled',
+        template: './canceled',
+        context: {
+          doctorname,
+          username,
+          date: date.toDateString(),
+        },
+      });
+      console.log('Appointment cancellation email sent successfully');
+    } catch (error) {
+      console.error('Error sending appointment cancellation email:', error);
     }
   }
 }

@@ -5,7 +5,8 @@ import { Topic } from '../schemas/topic.schema';
 import { CreateTopicDto, UpdateTopicDto } from '../dto/topic.dto';
 import { Doctor } from '../schemas/doctor.schema';
 import { ClientProxy, Client, Transport } from '@nestjs/microservices';
-import { PaginateWithSearch } from 'src/dto/paginate.dto';
+import { PaginateWithSearch, PaginateWithSort } from 'src/dto/paginate.dto';
+
 
 @Injectable()
 export class TopicService {
@@ -41,7 +42,7 @@ export class TopicService {
       .exec();
 
     if (!updatedTopic) {
-      throw new NotFoundException(`Topic with ID ${id} not found`);
+      throw new NotFoundException(`Chủ đề với ID ${id} không tìm thấy`);
     }
 
     return updatedTopic;
@@ -55,19 +56,18 @@ export class TopicService {
   }
   async findDoctorsByTopic(
     topicId: string,
-    paginateDto: PaginateWithSearch,
+    paginateDto: PaginateWithSort,
   ): Promise<any> {
-    const { current, limit } = paginateDto;
+    const { current, limit, IsAsc } = paginateDto;
     const skip = (current - 1) * limit;
-
-    // Tạo điều kiện tìm kiếm
     const filter: any = { topic: topicId };
-    // Thực hiện phân trang và tìm kiếm
+    const sortOrder = IsAsc === 'asc' ? 1 : -1;
+  
     const [doctors, total] = await Promise.all([
-      this.doctorModel.find(filter).skip(skip).limit(limit).exec(),
+      this.doctorModel.find(filter).skip(skip).limit(limit).sort({ experience: sortOrder }).exec(),
       this.doctorModel.countDocuments(filter).exec(),
     ]);
-
+  
     return {
       total,
       current,
@@ -75,5 +75,5 @@ export class TopicService {
       totalPages: Math.ceil(total / limit),
       doctors,
     };
-  }
+  }  
 }

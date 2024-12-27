@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { ChatRoomService } from './chatroom.service';
 import { CreateChatRoomDto } from '../dto/create-chatroom.dto';
 import { SendMessageDto } from '../dto/send-message.dto';
@@ -28,5 +28,10 @@ export class ChatRoomController {
   @Get('user/:id')
   async getChatRoomsByUserId(@Param('id') userId: string): Promise<ChatRoom[]> {
     return this.chatRoomService.getChatroomByIdUser(userId);
+  }
+  @Delete(':id')
+  async removeChatRoom(@Param('id') id: string): Promise<void> {
+    console.log('ID from route:', id);
+    return this.chatRoomService.removeChatroom(id);
   }
 }

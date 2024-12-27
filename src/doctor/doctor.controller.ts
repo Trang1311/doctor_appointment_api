@@ -13,18 +13,24 @@ import {
   UploadedFile,
 } from '@nestjs/common';
 import { DoctorService } from './doctor.service';
-import { CreateDoctorDto, UpdateDoctorDto } from '../dto/doctor.dto';
-import { PaginateWithSearch } from 'src/dto/paginate.dto';
+import {
+  CreateDoctorDto,
+  RemoveSlotsDto,
+  UpdateDoctorDto,
+} from '../dto/doctor.dto';
+import { PaginateWithFilter, PaginateWithSearch } from 'src/dto/paginate.dto';
 import {
   ApiTags,
   ApiOperation,
   ApiResponse,
   ApiBearerAuth,
   ApiConsumes,
+  ApiBody,
 } from '@nestjs/swagger';
 import { Doctor } from '../schemas/doctor.schema';
 import { FileInterceptor } from '@nestjs/platform-express/multer';
 import { doctorStorage } from 'src/cloudinary/cloudinary.storage';
+import { ValidationPipe, UsePipes } from '@nestjs/common';
 
 @ApiTags('doctors')
 @Controller('doctors')
@@ -42,17 +48,25 @@ export class DoctorController {
     return this.doctorService.create(createDoctorDto);
   }
 
-  @Get()
+  @Get('/pag')
   @ApiOperation({ summary: 'Get all doctors' })
   @ApiResponse({
     status: 200,
     description: 'Return all doctors.',
     type: [Doctor],
   })
-  async findAll(@Query() paginateDto: PaginateWithSearch) {
+  async findAllwithPag(@Query() paginateDto: PaginateWithFilter) {
     return this.doctorService.findAll(paginateDto);
   }
 
+  @Get('province-stats')
+  async getProvinceStats(@Query() filterDto: PaginateWithFilter) {
+    return await this.doctorService.getProvinceStats(filterDto);
+  }
+  @Get('/all')
+  async GetAllDoctor() {
+    return this.doctorService.getAllDoctor();
+  }
   @Get(':id')
   @ApiOperation({ summary: 'Get a doctor by ID' })
   @ApiResponse({ status: 200, description: 'Return the doctor.', type: Doctor })
@@ -61,6 +75,7 @@ export class DoctorController {
     return this.doctorService.findById(id);
   }
 
+  @UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
   @Patch(':id')
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(FileInterceptor('image', { storage: doctorStorage }))
@@ -78,9 +93,29 @@ export class DoctorController {
     if (file) {
       updateDoctorDto.image = file;
     }
+    console.log(
+      'Experience received:',
+      updateDoctorDto.experience,
+      typeof updateDoctorDto.experience,
+    );
+
+    if (
+      updateDoctorDto.experience !== undefined &&
+      updateDoctorDto.experience !== null
+    ) {
+      updateDoctorDto.experience = Number(updateDoctorDto.experience);
+    }
     return this.doctorService.update(id, updateDoctorDto);
   }
 
+  @Delete(':id/slots')
+  @ApiBody({ type: RemoveSlotsDto })
+  async removeSlotsByDate(
+    @Param('id') id: string,
+    @Body() removeSlotsDto: RemoveSlotsDto,
+  ): Promise<Doctor> {
+    return this.doctorService.removeSlotsByDate(id, removeSlotsDto.date);
+  }
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a doctor' })
   @ApiResponse({

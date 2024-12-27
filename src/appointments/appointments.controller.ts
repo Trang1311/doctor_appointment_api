@@ -40,4 +40,9 @@ export class AppointmentController {
   async findByDoctorId(@Param('doctorid') doctorid: string) {
     return this.appointmentService.findAppointmentsByDoctorId(doctorid);
   }
+  @Get('/:id')
+  @ApiOperation({ summary: 'Find appointments by ID' })
+  async findById(@Param('id') id: string) {
+    return this.appointmentService.findAppointmentsById(id);
+  }
 }

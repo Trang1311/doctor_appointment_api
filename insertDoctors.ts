@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
 import mongoose from 'mongoose';
 
-// Định nghĩa schemas
+  
 const doctorSchema = new mongoose.Schema({
   name: String,
   username: String,
@@ -16,12 +16,12 @@ const doctorSchema = new mongoose.Schema({
   clinicAddress: String,
   lifeMotto: String,
   dailySlots: [{ type: mongoose.Schema.Types.ObjectId, ref: 'AvailableSlot' }],
-  topic: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Topics' }], // Đã cập nhật tên schema
+  topic: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Topics' }], 
 });
 
 const Doctor = mongoose.model('Doctor', doctorSchema);
-const AvailableSlot = mongoose.model('AvailableSlot', new mongoose.Schema({})); // Define schema as needed
-const Topics = mongoose.model('Topics', new mongoose.Schema({})); // Đã cập nhật tên schema
+const AvailableSlot = mongoose.model('AvailableSlot', new mongoose.Schema({}));  
+const Topics = mongoose.model('Topics', new mongoose.Schema({})); 
 
 const uri = 'mongodb://127.0.0.1:27017/doctor_appointment';
 mongoose
@@ -66,20 +66,17 @@ const generateDoctors = async () => {
         dailySlots: faker.helpers.arrayElements(availableSlotIds, {
           min: 1,
           max: 3,
-        }), // Randomly select 1 to 3 available slots
-        topic: faker.helpers.arrayElements(topicIds, { min: 1, max: 3 }), // Randomly select 1 to 3 topics
+        }),
+        topic: faker.helpers.arrayElements(topicIds, { min: 1, max: 3 }),  
       };
 
       doctors.push(doctor);
     }
-
-    // Insert the generated doctors into the MongoDB collection
     await Doctor.insertMany(doctors);
     console.log('Doctors inserted successfully');
   } catch (err) {
     console.error('Error inserting doctors:', err);
   } finally {
-    // Close the MongoDB connection
     mongoose.connection.close();
   }
 };

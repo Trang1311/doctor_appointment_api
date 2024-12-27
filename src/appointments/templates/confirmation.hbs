@@ -1,10 +1,38 @@
-<p>Your appointment has been confirmed!</p>
-<p>Date: {{date}}</p>
-<p>Start Time: {{startTime}}</p>
-<p>End Time: {{endTime}}</p>
-<p>Type: {{type}}</p>
-<p>Have a good day!!!</p>
-<p>SoulCare Team</p>
-        <div class="footer">
-            <p>This is an automated message. Please do not reply to this email.</p>
-        </div>
+<html lang='vi'>
+  <head>
+    <meta charset='UTF-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+    <style>
+      body { font-family: 'Arial', sans-serif; background-color: #f4f4f9;
+      margin: 0; padding: 0; } .container { background-color: #ffffff;
+      max-width: 600px; margin: 20px auto; padding: 20px; border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); } .header { text-align: center;
+      margin-bottom: 20px; } .header h2 { color: #1E90FF; } .details p {
+      font-size: 16px; color: #333333; margin: 10px 0; } .footer { text-align:
+      center; font-size: 12px; color: #888888; margin-top: 20px; } .footer p {
+      margin: 5px 0; } .footer a { color: #1E90FF; text-decoration: none; }
+    </style>
+  </head>
+  <body>
+    <div class='container'>
+      <div class='header'>
+        <h2>Cuộc hẹn của bạn đã được xác nhận!</h2>
+      </div>
+      <div class='details'>
+        <p><strong>Ngày:</strong> {{date}}</p>
+        <p><strong>Giờ bắt đầu:</strong> {{startTime}}</p>
+        <p><strong>Giờ kết thúc:</strong> {{endTime}}</p>
+        <p><strong>Loại cuộc hẹn:</strong> {{type}}</p>
+      </div>
+      <p>Chúng tôi rất mong được gặp bạn!</p>
+      <p>Chúc bạn một ngày tuyệt vời!</p>
+      <p><strong>Đội ngũ SoulCare</strong></p>
+      <div class='footer'>
+        <p>Đây là thông báo tự động. Vui lòng không trả lời email này.</p>
+        <p>Nếu bạn có bất kỳ câu hỏi nào, vui lòng liên hệ với đội ngũ hỗ trợ
+          của chúng tôi tại
+          <a href='mailto:support@soulcare.com'>support@soulcare.com</a>.</p>
+      </div>
+    </div>
+  </body>
+</html>

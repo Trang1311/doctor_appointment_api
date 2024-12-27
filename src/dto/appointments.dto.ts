@@ -62,6 +62,6 @@ export class UpdateAppointmentDto {
     description: 'Appointment status: Pending, Confirmed, or Canceled',
     example: 'e.g:Canceled',
   })
-  @IsEnum(['Pending', 'Confirmed', 'Canceled'])
+  @IsEnum(['Pending', 'Confirmed', 'Canceled', 'Completed'])
   status: string;
 }

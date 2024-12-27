@@ -1,16 +1,20 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { AppointmentController } from './appointments.controller';
 import { AppointmentService } from './appointments.service';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Appointment, AppointmentSchema } from 'src/schemas/appointment.schema';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import { User, UserSchema } from 'src/users/schemas/user.schema';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
+      { name: User.name, schema: UserSchema },
       { name: Appointment.name, schema: AppointmentSchema },
     ]),
+    forwardRef(() => AuthModule),
     MailerModule.forRoot({
       transport: {
         host: 'smtp.gmail.com',

@@ -7,7 +7,7 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import { CreateAvailableSlotDto } from './availableslot.dto';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -52,7 +52,6 @@ export class CreateDoctorDto {
 
   @ApiProperty({
     type: [Object],
-    description: 'Array of daily slots with available times',
   })
   @ValidateNested({ each: true })
   @Type(() => DailySlotDto)
@@ -60,7 +59,6 @@ export class CreateDoctorDto {
 
   @ApiProperty({
     type: [String],
-    description: 'List of topic IDs',
   })
   @IsString({ each: true })
   topic: string[];
@@ -86,7 +84,6 @@ export class DailySlotDto {
   @IsArray()
   @ApiProperty({
     type: [CreateAvailableSlotDto],
-    description: 'Array of available slots for the date',
   })
   @ValidateNested({ each: true })
   @Type(() => CreateAvailableSlotDto)
@@ -103,7 +100,10 @@ export class UpdateDoctorDto {
   specialization?: string;
 
   @IsOptional()
-  @IsNumber()
+  @Transform(({ value }) =>
+    value !== null && value !== undefined ? Number(value) : value,
+  )
+  @IsNumber({}, { message: 'Experience must be a number' })
   experience?: number;
 
   @IsOptional()
@@ -117,18 +117,19 @@ export class UpdateDoctorDto {
   @IsOptional()
   imageURL?: string;
 
-  @ApiProperty({
-    type: [Object],
-    description: 'Array of daily slots with available times',
-  })
+  // @ApiProperty({
+  //   type: [Object],
+  //   required: false, // Make it optional
+  // })
+  @IsOptional() // Ensure it's optional
   @ValidateNested({ each: true })
   @Type(() => DailySlotDto)
-  dailySlots: DailySlotDto[];
+  dailySlots?: DailySlotDto[]; // Make sure it's optional
 
-  @ApiProperty({
-    type: [String],
-    description: 'List of topic IDs',
-  })
+  // @ApiProperty({
+  //   type: [String],
+  //   required: false,
+  // })
   @IsOptional()
   @IsString({ each: true })
   topic: string[];
@@ -148,4 +149,11 @@ export class UpdateDoctorDto {
   @IsOptional()
   @IsString()
   lifeMotto?: string;
+}
+export class RemoveSlotsDto {
+  @ApiProperty({
+    description: 'The date to remove the doctor\'s available slots',
+    example: '2024-12-27',
+  })
+  date: string;
 }

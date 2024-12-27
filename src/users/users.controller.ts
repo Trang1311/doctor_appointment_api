@@ -8,11 +8,13 @@ import {
   Put,
   UseInterceptors,
   UploadedFile,
+  BadRequestException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { usersDTO } from './DTO/user.dto';
 import {
   ApiBearerAuth,
+  ApiBody,
   ApiConsumes,
   ApiOperation,
   ApiResponse,
@@ -74,7 +76,30 @@ export class UsersController {
   async remove(@Param('id') id: string) {
     return this.usersService.remove(id);
   }
-
+  @Post(':id/request-password-reset')
+  async requestPasswordReset(@Param('id') userId: string): Promise<void> {
+    await this.usersService.sendVerificationCode(userId);
+  }
+  @Post(':id/reset-password')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        code: { type: 'integer', example: 123456 },
+        newPassword: { type: 'string', example: 'new_secure_password' },
+      },
+    },
+  })
+  async resetPassword(
+    @Param('id') userId: string,
+    @Body() body: { code: number; newPassword: string },
+  ): Promise<void> {
+    const { code, newPassword } = body;
+    if (!code || !newPassword) {
+      throw new BadRequestException('Thiếu mã xác thực hoặc mật khẩu mới');
+    }
+    await this.usersService.verifyAndChangePassword(userId, code, newPassword);
+  }
   @Post('login/google')
   async googleLogin(@Body() body: { tokenId: string }) {
     const profile = await this.verifyGoogleToken(body.tokenId);

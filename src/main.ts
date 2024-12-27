@@ -44,11 +44,6 @@ async function bootstrap() {
 
   app.use(requestIp.mw());
   dotenv.config();
-  console.log('Cloudinary Config:', {
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET,
-  });
 
   await app.startAllMicroservices();
   await app.listen(3000, '0.0.0.0');

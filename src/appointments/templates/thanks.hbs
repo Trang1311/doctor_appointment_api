@@ -1,52 +1,31 @@
-<!DOCTYPE html>
 <html>
-<head>
-    <meta charset="utf-8">
-    <title>Thank you for using our services</title>
+  <head>
+    <meta charset='utf-8' />
+    <title>Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            font-size: 20px;
-            color: #333;
-            padding: 20px;
-        }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background: #f9f9f9;
-            padding: 20px;
-            border-radius: 5px;
-            border: 1px solid #ddd;
-        }
-        h2 {
-            color: #8DBBFA;
-            font-size: 30px;
-        }
-        p {
-            margin: 0 0 10px;
-        }
-        .footer {
-            font-size: 15px;
-            color: #888;
-        }
+      body { font-family: Arial, sans-serif; line-height: 1.6; font-size: 20px;
+      color: #333; padding: 20px; } .container { max-width: 600px; margin: 0
+      auto; background: #f9f9f9; padding: 20px; border-radius: 5px; border: 1px
+      solid #ddd; } h2 { color: #8DBBFA; font-size: 30px; } p { margin: 0 0
+      10px; } .footer { font-size: 15px; color: #888; }
     </style>
-</head>
-<body>
-    <div class="container">
-        <h2>Thank You for Your Appointment Booking!</h2>
-        <p>Dear Customer,{{username}}</p>
-        <p>Thank you for scheduling an appointment with us. Here are the details:</p>
-        <p><strong>Doctor's name:</strong> {{doctorname}}</p>
-        <p><strong>Date:</strong> {{date}}</p>
-        <p><strong>Time:</strong> {{startTime}} - {{endTime}}</p>
-        <p><strong>Type:</strong> {{type}}</p>
-        <p>Please wait for a confirmation email with further details.</p>
-        <p>Best regards,</p>
-        <p>SoulCare Team</p>
-        <div class="footer">
-            <p>This is an automated message. Please do not reply to this email.</p>
-        </div>
+  </head>
+  <body>
+    <div class='container'>
+      <h2>Cảm ơn bạn đã đặt lịch hẹn với chúng tôi!</h2>
+      <p>Chào bạn, {{username}}</p>
+      <p>Cảm ơn bạn đã đặt lịch hẹn với chúng tôi. Dưới đây là chi tiết cuộc
+        hẹn:</p>
+      <p><strong>Tên bác sĩ:</strong> {{doctorname}}</p>
+      <p><strong>Ngày:</strong> {{date}}</p>
+      <p><strong>Giờ:</strong> {{startTime}} - {{endTime}}</p>
+      <p><strong>Loại cuộc hẹn:</strong> {{type}}</p>
+      <p>Vui lòng chờ email xác nhận với các chi tiết tiếp theo.</p>
+      <p>Trân trọng,</p>
+      <p>Đội ngũ SoulCare</p>
+      <div class='footer'>
+        <p>Đây là thông báo tự động. Vui lòng không trả lời email này.</p>
+      </div>
     </div>
-</body>
+  </body>
 </html>

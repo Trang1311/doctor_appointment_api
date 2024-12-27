@@ -6,7 +6,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { isValidObjectId, Model } from 'mongoose';
 import { ChatRoom } from '../schemas/chatroom.schema';
 import { Message } from '../schemas/message.schema';
 import { CreateChatRoomDto } from '../dto/create-chatroom.dto';
@@ -32,11 +32,11 @@ export class ChatRoomService {
       createChatRoomDto.doctorId,
     );
     if (!doctorExists) {
-      throw new NotFoundException('Doctor not found');
+      throw new NotFoundException('Không tìm thấy bác sĩ');
     }
     const userExists = await this.userModel.findById(createChatRoomDto.userId);
     if (!userExists) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('Không tìm thấy người dùng');
     }
 
     const existingChatRoom = await this.chatRoomModel.findOne({
@@ -51,7 +51,7 @@ export class ChatRoomService {
     const chatRoom = new this.chatRoomModel(createChatRoomDto);
     const savedChatRoom = await chatRoom.save();
     this.myGateway.notifyChatRoomCreated(savedChatRoom);
-    return savedChatRoom; 
+    return savedChatRoom;
   }
 
   async sendMessage(sendMessageDto: SendMessageDto): Promise<Message> {
@@ -82,9 +82,10 @@ export class ChatRoomService {
     const message = new this.messageModel(messageData);
     const savedMessage = await message.save();
     chatRoom.messages.push(savedMessage.id);
+
     await chatRoom.save();
-    this.myGateway.notifyNewMessage(savedMessage, chatRoom._id.toString());
-    return savedMessage; 
+    this.myGateway.notifyNewMessage(savedMessage, sendMessageDto.chatRoomId);
+    return savedMessage;
   }
 
   async getMessages(chatRoomId: string): Promise<Message[]> {
@@ -92,13 +93,24 @@ export class ChatRoomService {
       .find({ chatRoom: chatRoomId })
       .sort({ timestamp: 1 })
       .exec();
-    if (!messages.length) {
+    return messages;
+  }
+  async removeChatroom(chatRoomId: string): Promise<void> {
+    if (!chatRoomId) {
+      throw new NotFoundException('ID phòng chat không được cung cấp');
+    }
+    if (!isValidObjectId(chatRoomId)) {
+      throw new NotFoundException(`ID phòng chat không hợp lệ: ${chatRoomId}`);
+    }
+
+    const result = await this.chatRoomModel
+      .findByIdAndDelete(chatRoomId)
+      .exec();
+    if (!result) {
       throw new NotFoundException(
-        'Không tìm thấy tin nhắn cho phòng chat: ',
-        chatRoomId,
+        `Phòng chat với ID ${chatRoomId} không tồn tại`,
       );
     }
-    return messages;
   }
 
   async getChatroomByIdUser(userId: string): Promise<ChatRoom[]> {

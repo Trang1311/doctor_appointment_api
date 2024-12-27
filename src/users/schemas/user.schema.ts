@@ -12,6 +12,10 @@ export class User extends Document {
   password: string;
 
   @Prop()
+  verificationCode?: number;
+  @Prop()
+  verificationCodeExpiry?: Date;
+  @Prop()
   name: string;
   @Prop()
   imageURL: string;

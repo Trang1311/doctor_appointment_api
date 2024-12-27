@@ -35,7 +35,7 @@ export class MyGateway
     this.clientIpMap.set(client.id, ip as string);
 
     client.on('joinRoom', (roomId: string) => {
-      client.join(roomId); // Join the specified room
+      client.join(roomId);
       console.log(`Client ${client.id} joined room: ${roomId}`);
     });
   }
@@ -52,5 +52,8 @@ export class MyGateway
 
   notifyNewMessage(message: Message, chatRoomId: string) {
     this.server.to(chatRoomId).emit('newMessage', message);
+  }
+  notifyCall(data: { from: string; roomId: string }) {
+    this.server.to(data.roomId).emit('call', data);
   }
 }
